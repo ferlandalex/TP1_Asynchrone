@@ -2,6 +2,7 @@ window.addEventListener("load", getUsers);
 listeImages = document.getElementById("liste")
 
 userNom = document.getElementById("data-nom");
+userImg = document.getElementById("data-img");
 userAdresse = document.getElementById("data-adresse");
 userVille = document.getElementById("data-ville");
 userEtat = document.getElementById("data-etat");
@@ -19,14 +20,14 @@ function getUsers(){
                 .then(function (json){
                     arrUtilisateurs = json.results;
                     console.log(arrUtilisateurs);
-                    displayAllUsers();
+                    afficherUsers();
                 })
             }
         )
 
 }
 
-function displayAllUsers(){
+function afficherUsers(){
     let elementul = document.createElement("ul");
     listeImages.appendChild(elementul);
 
@@ -42,24 +43,19 @@ function displayAllUsers(){
         elementImage.setAttribute('src',imageUtilisateur);
         elementImage.setAttribute('alt',altUtilisateur);
         elementImage.setAttribute('id', i);
-        elementbBtn.addEventListener("click",afficherInfo);
+        elementImage.addEventListener("click",afficherInfo);
     }
 }
 function afficherInfo(i){
-    // effacerInfo();
-    test = this.id;
-    console.log(this);
-    userNom.innerText = arrUtilisateurs[1].name.first + " " + arrUtilisateurs[1].name.last
-    userAdresse.innerText = arrUtilisateurs[1].location.street.number + " " + arrUtilisateurs[1].location.name;
-    userVille.innerText = arrUtilisateurs[1].location.country;
-    userEtat.innerText = arrUtilisateurs[1].location.state;
-    userPostal.innerText = arrUtilisateurs[1].location.postcode;
-}
+    idSelectionne = this.id;
+    prenomNom =arrUtilisateurs[idSelectionne].name.first + " " + arrUtilisateurs[idSelectionne].name.last;
+    userNom.innerText = prenomNom;
 
-// function effacerInfo(){
-//     userNom.innerText = "";
-//     userAdresse.innerText = "";
-//     userVille.innerText = "";
-//     userEtat.innerText = "";
-//     userPostal.innerText = "";
-// }
+    userImg.setAttribute('src',arrUtilisateurs[idSelectionne].picture.large)
+    userImg.setAttribute('alt',prenomNom)
+
+    userAdresse.innerText = arrUtilisateurs[idSelectionne].location.street.number + " " + arrUtilisateurs[idSelectionne].location.street.name;
+    userVille.innerText = arrUtilisateurs[idSelectionne].location.country;
+    userEtat.innerText = arrUtilisateurs[idSelectionne].location.state;
+    userPostal.innerText = arrUtilisateurs[idSelectionne].location.postcode;
+}
