@@ -2,6 +2,14 @@ window.addEventListener("load",fetchFilms);
 let url = "https://swapi.dev/api/films/";
 let arrListeFilms = [];
 let arrListePlanetes = [];
+let planeteCurrente = 0;
+
+let btnNext = document.getElementById("btnNext");
+let btnBack = document.getElementById("btnBack");
+let btnToggle = document.getElementById("btnToggle");
+
+btnNext.addEventListener("click", changerPlanete);
+btnBack.addEventListener("click", changerPlanete);
 
 
 function fetchFilms(){
@@ -63,6 +71,7 @@ function ajouterClickEvent(titre){
 }
 
 function afficherPlanetes(){
+    planeteCurrente = 0;
     document.getElementById("planete").innerHTML = "";
     let element_div = document.getElementById("planete");
     let element_span = document.createElement("span");
@@ -73,9 +82,44 @@ function afficherPlanetes(){
     element_span.appendChild(element_img);
     element_span.appendChild(element_p);
 
-    element_p.textContent = arrListePlanetes[0];
-    nomImg = "images/" + arrListePlanetes[0] +".jpeg";
-    element_img.setAttribute("src",nomImg);
-    element_img.setAttribute("alt", arrListePlanetes[0])
 
+    element_p.textContent = arrListePlanetes[planeteCurrente];
+    element_p.setAttribute("id","planeteNom");
+    nomImg = "images/" + arrListePlanetes[planeteCurrente] +".jpeg";
+    element_img.setAttribute("src",nomImg);
+    element_img.setAttribute("alt", arrListePlanetes[planeteCurrente])
+    element_img.setAttribute("id", "planeteImg")
+    element_img.setAttribute("style", "max-height: 200px")
+    element_img.addEventListener("error",test);
+}
+
+function changerPlanete(){
+    nomPlanet = document.getElementById("planeteNom");
+    imgPlanet = document.getElementById("planeteImg");
+    nbPlanetes = (arrListePlanetes.length - 1);
+    if (this.id == "btnNext") {
+        if(planeteCurrente < nbPlanetes) {
+            planeteCurrente = planeteCurrente + 1;
+        }
+        else if (planeteCurrente == nbPlanetes){
+            planeteCurrente = 0;
+        }
+    }
+    if (this.id == "btnBack"){
+        if(planeteCurrente > 0) {
+            planeteCurrente = planeteCurrente - 1;
+        }
+        else if (planeteCurrente == 0){
+            planeteCurrente = nbPlanetes;
+        }
+    }
+
+    nomPlanet.innerText = arrListePlanetes[planeteCurrente];
+    imgPlanet.setAttribute("src","images/" + arrListePlanetes[planeteCurrente] +".jpeg")
+    imgPlanet.setAttribute("alt",arrListePlanetes[planeteCurrente]);
+
+
+}
+function test(){
+    this.setAttribute("src","images/planete.jpg");
 }
