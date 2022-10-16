@@ -5,18 +5,20 @@ let arrListePlanetes = [];
 let planeteCurrente = 0;
 let minuterie = null;
 let toggleMode = false;
+let vitesse = null;
+let intervalVitesse = [1500,1000,500]
 
 let btnNext = document.getElementById("btnNext");
 let btnBack = document.getElementById("btnBack");
 let btnToggle = document.getElementById("btnToggle");
+let listeVitesses = document.getElementById("vitesse");
 
 btnNext.addEventListener("click", changerPlanete);
 btnBack.addEventListener("click", changerPlanete);
 btnToggle.addEventListener("click",toggleRotation);
 
-
 function fetchFilms(){
-
+    //Fetch une liste de 3 films
     fetch(url)
         .then(function (tableau){
             tableau.json()
@@ -29,7 +31,7 @@ function fetchFilms(){
 }
 
 function fetchPlanetes(planete){
-
+    //fetch la liste des planêtes du film selectionné
     arrListePlanetes = [];
     leFilm = arrListeFilms[this.id];
 
@@ -41,19 +43,19 @@ function fetchPlanetes(planete){
                         laPlanete = json;
                         arrListePlanetes.push(laPlanete.name);
                         if (arrListePlanetes.length == leFilm.planets.length){
+                            vitesse = intervalVitesse[1];
                             afficherPlanetes();
                         }
                     })
             })
     }
-
-
 }
 
 function afficherListeFilms(){
 
     let element_div = document.getElementById("contenu");
     let element_ul = document.createElement("ul");
+
     element_div.appendChild(element_ul);
 
     for (i=0; i < 3; i++){
@@ -74,9 +76,15 @@ function ajouterClickEvent(titre){
 }
 
 function afficherPlanetes(){
+    //debut de la minuterie
     toggleMode = true;
-    minuterie = window.setInterval(changerPlanete, 1000);
+    minuterie = window.setInterval(changerPlanete, vitesse);
+
+    //affichage de la liste des vitesses
+    afficherListeVitesses();
+
     planeteCurrente = 0;
+
     document.getElementById("planete").innerHTML = "";
     let element_div = document.getElementById("planete");
     let element_span = document.createElement("span");
@@ -86,7 +94,6 @@ function afficherPlanetes(){
     element_div.appendChild(element_span);
     element_span.appendChild(element_img);
     element_span.appendChild(element_p);
-
 
     element_p.textContent = arrListePlanetes[planeteCurrente];
     element_p.setAttribute("id","planeteNom");
@@ -100,10 +107,11 @@ function afficherPlanetes(){
 
 function changerPlanete(){
 
-    //reset le timer de la minuterie quand on click sur suivant/precedent
+    //reset du timer de la minuterie quand on click sur suivant/precedent
     if (toggleMode == true) {
         clearInterval(minuterie);
-        minuterie = window.setInterval(changerPlanete, 1000);
+
+        minuterie = window.setInterval(changerPlanete, vitesse);
     }
 
     nomPlanet = document.getElementById("planeteNom");
@@ -128,10 +136,7 @@ function changerPlanete(){
     nomPlanet.innerText = arrListePlanetes[planeteCurrente];
     imgPlanet.setAttribute("src","images/" + arrListePlanetes[planeteCurrente] +".jpeg")
     imgPlanet.setAttribute("alt",arrListePlanetes[planeteCurrente]);
-
-
 }
-
 
 function afficherImgManquante(){
     this.setAttribute("src","images/planete.jpg");
@@ -154,4 +159,37 @@ function changerTexteToggle(){
     } else {
         btnToggle.innerText = "Arrêter";
     }
+}
+
+function afficherListeVitesses(){
+    //reset
+    listeVitesses.innerHTML = "";
+
+    //affichage
+    let nomVitesse = ["Lent","Moyen","Rapide"]
+    let element_select = document.createElement("select");
+    let element_label = document.createElement("label");
+
+    element_select.appendChild(element_label);
+    element_select.setAttribute("id","vitesseSelectionnee");
+    element_label.innerText = "Vitesse de défilement"
+    element_label.setAttribute("for","vitesseSelectionnee");
+    element_select.addEventListener("change",changerVitesse);
+
+    for (i=0; i <=2; i++){
+        let element_option = document.createElement("option");
+        element_option.setAttribute("value",i);
+        element_option.innerText = nomVitesse[i];
+        if (element_option.innerText == "Moyen"){
+            element_option.setAttribute("selected","selected");
+        }
+        element_select.appendChild(element_option);
+    }
+    listeVitesses.appendChild(element_select);
+}
+
+function changerVitesse(){
+    vitesse = intervalVitesse[this.value];
+    clearInterval(minuterie);
+    minuterie= window.setInterval(changerPlanete, vitesse);
 }
