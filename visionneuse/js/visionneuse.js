@@ -3,6 +3,8 @@ let url = "https://swapi.dev/api/films/";
 let arrListeFilms = [];
 let arrListePlanetes = [];
 let planeteCurrente = 0;
+let minuterie = null;
+let toggleMode = false;
 
 let btnNext = document.getElementById("btnNext");
 let btnBack = document.getElementById("btnBack");
@@ -10,6 +12,7 @@ let btnToggle = document.getElementById("btnToggle");
 
 btnNext.addEventListener("click", changerPlanete);
 btnBack.addEventListener("click", changerPlanete);
+btnToggle.addEventListener("click",toggleRotation);
 
 
 function fetchFilms(){
@@ -71,6 +74,8 @@ function ajouterClickEvent(titre){
 }
 
 function afficherPlanetes(){
+    toggleMode = true;
+    minuterie = window.setInterval(changerPlanete, 1000);
     planeteCurrente = 0;
     document.getElementById("planete").innerHTML = "";
     let element_div = document.getElementById("planete");
@@ -90,27 +95,33 @@ function afficherPlanetes(){
     element_img.setAttribute("alt", arrListePlanetes[planeteCurrente])
     element_img.setAttribute("id", "planeteImg")
     element_img.setAttribute("style", "max-height: 200px")
-    element_img.addEventListener("error",test);
+    element_img.addEventListener("error",afficherImgManquante);
 }
 
 function changerPlanete(){
+
+    //reset le timer de la minuterie quand on click sur suivant/precedent
+    if (toggleMode == true) {
+        clearInterval(minuterie);
+        minuterie = window.setInterval(changerPlanete, 1000);
+    }
+
     nomPlanet = document.getElementById("planeteNom");
     imgPlanet = document.getElementById("planeteImg");
     nbPlanetes = (arrListePlanetes.length - 1);
-    if (this.id == "btnNext") {
-        if(planeteCurrente < nbPlanetes) {
-            planeteCurrente = planeteCurrente + 1;
-        }
-        else if (planeteCurrente == nbPlanetes){
-            planeteCurrente = 0;
-        }
-    }
+
     if (this.id == "btnBack"){
         if(planeteCurrente > 0) {
             planeteCurrente = planeteCurrente - 1;
         }
         else if (planeteCurrente == 0){
             planeteCurrente = nbPlanetes;
+        }
+    }else {
+        if (planeteCurrente < nbPlanetes) {
+            planeteCurrente = planeteCurrente + 1;
+        } else if (planeteCurrente == nbPlanetes) {
+            planeteCurrente = 0;
         }
     }
 
@@ -120,6 +131,27 @@ function changerPlanete(){
 
 
 }
-function test(){
+
+
+function afficherImgManquante(){
     this.setAttribute("src","images/planete.jpg");
+}
+
+function toggleRotation(){
+    if (!toggleMode){
+        minuterie = window.setInterval(changerPlanete, 1000);
+        changerTexteToggle();
+        toggleMode = true;
+    }else {
+        clearInterval(minuterie);
+        changerTexteToggle();
+        toggleMode = false;
+    }
+}
+function changerTexteToggle(){
+    if (btnToggle.innerText == "Arrêter"){
+        btnToggle.innerText = "Activer";
+    } else {
+        btnToggle.innerText = "Arrêter";
+    }
 }
