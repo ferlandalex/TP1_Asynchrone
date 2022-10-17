@@ -78,7 +78,10 @@ function ajouterClickEvent(titre){
 function afficherPlanetes(){
     //debut de la minuterie
     toggleMode = true;
+    clearInterval(minuterie);
     minuterie = window.setInterval(changerPlanete, vitesse);
+    //remettre le bon texte dans le bouton toggle
+    btnToggle.innerText = "Arrêter";
 
     //affichage de la liste des vitesses
     afficherListeVitesses();
